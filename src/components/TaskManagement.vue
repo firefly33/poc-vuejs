@@ -1,23 +1,37 @@
 <script setup lang="ts">
+import KanbanBoard from './KanbanBoard.vue'
 </script>
 
 <template>
   <div class="task-management">
-    <h1>Gestion des tâches</h1>
+    <header class="page-header">
+      <h1>Gestion des tâches</h1>
+      <p>Organisez vos tâches avec notre tableau Kanban</p>
+    </header>
+    
+    <KanbanBoard />
   </div>
 </template>
 
 <style scoped>
 .task-management {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  text-align: center;
+  min-height: 100vh;
 }
 
-.task-management h1 {
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
   font-size: 2.5rem;
   color: #2c3e50;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.page-header p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
 }
 </style>

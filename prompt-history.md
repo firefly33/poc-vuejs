@@ -121,6 +121,21 @@
 
 ---
 
+### 13. Ajout d'un système Kanban avec Pinia
+**Prompt :** "Great ! Now Add a Kanban feature to the new page. Please use Pinia to handle the state. For the moment, do not implement drag and drop, just add left and right arrow buttons to move the tasks"
+
+**Actions réalisées :**
+- Installation de Pinia pour la gestion d'état
+- Configuration de Pinia dans main.ts
+- Création de l'interface KanbanTask avec statuts (todo, in-progress, done)
+- Création du store Kanban avec Pinia (ajout, déplacement, suppression, persistance localStorage)
+- Création du composant KanbanCard avec boutons de déplacement gauche/droite
+- Création du composant KanbanBoard avec 3 colonnes et formulaire d'ajout
+- Mise à jour de TaskManagement.vue pour intégrer le tableau Kanban
+- Ajout de données d'exemple lors du premier chargement
+
+---
+
 ## Notes
 - Ce fichier sera mis à jour à chaque nouveau prompt utilisateur
 - Format : Prompt → Actions réalisées
