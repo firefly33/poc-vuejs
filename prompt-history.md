@@ -99,6 +99,28 @@
 
 ---
 
+### 11. Commit de l'historique et mise à jour automatique
+**Prompt :** "Commit the prompt history file, and update it everytime a tell you something else"
+
+**Actions réalisées :**
+- Commit du fichier prompt-history.md avec format Conventional Commits
+- Engagement de mise à jour automatique pour chaque nouveau prompt
+
+---
+
+### 12. Ajout d'une nouvelle page "Gestion des tâches"
+**Prompt :** "Add a new page to the app named "Gestion des tâches", with only this title in it"
+
+**Actions réalisées :**
+- Installation de Vue Router 4
+- Création du composant TaskManagement.vue avec le titre "Gestion des tâches"
+- Configuration du routeur avec deux routes (/, /gestion-des-taches)
+- Mise à jour de main.ts pour utiliser le routeur
+- Modification d'App.vue pour inclure la navigation avec router-link et router-view
+- Ajout de styles pour la navigation
+
+---
+
 ## Notes
 - Ce fichier sera mis à jour à chaque nouveau prompt utilisateur
 - Format : Prompt → Actions réalisées
