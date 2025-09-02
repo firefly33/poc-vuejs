@@ -6,28 +6,32 @@ interface KanbanCardProps {
 }
 
 interface KanbanCardEmits {
-  moveLeft: [taskId: number]
-  moveRight: [taskId: number]
   delete: [taskId: number]
+  dragStart: [taskId: number]
 }
 
-defineProps<KanbanCardProps>()
-defineEmits<KanbanCardEmits>()
+const props = defineProps<KanbanCardProps>()
+const emit = defineEmits<KanbanCardEmits>()
 
-function canMoveLeft(status: string): boolean {
-  return status !== 'todo'
+function handleDragStart(event: DragEvent) {
+  if (event.dataTransfer) {
+    event.dataTransfer.setData('text/plain', props.task.id.toString())
+    event.dataTransfer.effectAllowed = 'move'
+    emit('dragStart', props.task.id)
+  }
 }
 
-function canMoveRight(status: string): boolean {
-  return status !== 'done'
-}
 </script>
 
 <template>
-  <div class="kanban-card">
+  <div
+    class="kanban-card"
+    draggable="true"
+    @dragstart="handleDragStart"
+  >
     <div class="card-header">
       <h3 class="card-title">{{ task.title }}</h3>
-      <button 
+      <button
         @click="$emit('delete', task.id)"
         class="delete-btn"
         aria-label="Supprimer la tâche"
@@ -35,33 +39,18 @@ function canMoveRight(status: string): boolean {
         ×
       </button>
     </div>
-    
+
     <p v-if="task.description" class="card-description">
       {{ task.description }}
     </p>
-    
-    <div class="card-actions">
-      <button
-        v-if="canMoveLeft(task.status)"
-        @click="$emit('moveLeft', task.id)"
-        class="move-btn move-left"
-        aria-label="Déplacer vers la gauche"
-      >
-        ←
-      </button>
-      
+
+    <div class="card-footer">
       <span class="status-badge" :class="task.status">
         {{ task.status === 'todo' ? 'À faire' : task.status === 'in-progress' ? 'En cours' : 'Terminé' }}
       </span>
-      
-      <button
-        v-if="canMoveRight(task.status)"
-        @click="$emit('moveRight', task.id)"
-        class="move-btn move-right"
-        aria-label="Déplacer vers la droite"
-      >
-        →
-      </button>
+      <div class="drag-indicator">
+        ⋮⋮
+      </div>
     </div>
   </div>
 </template>
@@ -74,11 +63,20 @@ function canMoveRight(status: string): boolean {
   margin-bottom: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
+  cursor: grab;
+}
+
+.kanban-card:active {
+  cursor: grabbing;
 }
 
 .kanban-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.kanban-card:hover .drag-indicator {
+  opacity: 1;
 }
 
 .card-header {
@@ -122,35 +120,11 @@ function canMoveRight(status: string): boolean {
   line-height: 1.4;
 }
 
-.card-actions {
+.card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-}
-
-.move-btn {
-  background: #3498db;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  width: 36px;
-  height: 36px;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.move-btn:hover {
-  background: #2980b9;
-}
-
-.move-btn:disabled {
-  background: #bdc3c7;
-  cursor: not-allowed;
 }
 
 .status-badge {
@@ -175,5 +149,15 @@ function canMoveRight(status: string): boolean {
 .status-badge.done {
   background: #d4edda;
   color: #155724;
+}
+
+.drag-indicator {
+  color: #bdc3c7;
+  font-size: 16px;
+  font-weight: bold;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  cursor: grab;
+  user-select: none;
 }
 </style>

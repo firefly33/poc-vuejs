@@ -2,10 +2,12 @@
 import { ref, onMounted } from 'vue'
 import { useKanbanStore } from '../stores/kanban'
 import KanbanCard from './KanbanCard.vue'
+import type { KanbanColumn } from '../types/KanbanTask'
 
 const kanbanStore = useKanbanStore()
 const newTaskTitle = ref('')
 const newTaskDescription = ref('')
+const draggedTaskId = ref<number | null>(null)
 
 function addTask() {
   const title = newTaskTitle.value.trim()
@@ -16,16 +18,41 @@ function addTask() {
   newTaskDescription.value = ''
 }
 
-function moveTaskLeft(taskId: number) {
-  kanbanStore.moveTask(taskId, 'left')
-}
-
-function moveTaskRight(taskId: number) {
-  kanbanStore.moveTask(taskId, 'right')
-}
-
 function deleteTask(taskId: number) {
   kanbanStore.deleteTask(taskId)
+}
+
+function handleDragStart(taskId: number) {
+  draggedTaskId.value = taskId
+}
+
+function handleDragOver(event: DragEvent) {
+  event.preventDefault()
+  event.dataTransfer!.dropEffect = 'move'
+}
+
+function handleDrop(event: DragEvent, newStatus: KanbanColumn) {
+  event.preventDefault()
+
+  const taskId = event.dataTransfer?.getData('text/plain')
+  if (taskId && draggedTaskId.value) {
+    kanbanStore.moveTaskToColumn(parseInt(taskId), newStatus)
+    draggedTaskId.value = null
+  }
+}
+
+function handleDragEnter(event: DragEvent) {
+  event.preventDefault()
+  const target = event.currentTarget as HTMLElement
+  target.classList.add('drag-over')
+}
+
+function handleDragLeave(event: DragEvent) {
+  const target = event.currentTarget as HTMLElement
+  // Only remove class if we're actually leaving the drop zone
+  if (!target.contains(event.relatedTarget as Node)) {
+    target.classList.remove('drag-over')
+  }
 }
 
 onMounted(() => {
@@ -61,17 +88,22 @@ onMounted(() => {
           <h3>À faire</h3>
           <span class="task-count">{{ kanbanStore.todoTasks.length }}</span>
         </div>
-        <div class="column-content">
+        <div
+          class="column-content drop-zone"
+          @dragover="handleDragOver"
+          @drop="handleDrop($event, 'todo')"
+          @dragenter="handleDragEnter"
+          @dragleave="handleDragLeave"
+        >
           <KanbanCard
             v-for="task in kanbanStore.todoTasks"
             :key="task.id"
             :task="task"
-            @move-left="moveTaskLeft"
-            @move-right="moveTaskRight"
+            @drag-start="handleDragStart"
             @delete="deleteTask"
           />
           <div v-if="kanbanStore.todoTasks.length === 0" class="empty-column">
-            Aucune tâche à faire
+            Glissez une tâche ici
           </div>
         </div>
       </div>
@@ -81,17 +113,22 @@ onMounted(() => {
           <h3>En cours</h3>
           <span class="task-count">{{ kanbanStore.inProgressTasks.length }}</span>
         </div>
-        <div class="column-content">
+        <div
+          class="column-content drop-zone"
+          @dragover="handleDragOver"
+          @drop="handleDrop($event, 'in-progress')"
+          @dragenter="handleDragEnter"
+          @dragleave="handleDragLeave"
+        >
           <KanbanCard
             v-for="task in kanbanStore.inProgressTasks"
             :key="task.id"
             :task="task"
-            @move-left="moveTaskLeft"
-            @move-right="moveTaskRight"
+            @drag-start="handleDragStart"
             @delete="deleteTask"
           />
           <div v-if="kanbanStore.inProgressTasks.length === 0" class="empty-column">
-            Aucune tâche en cours
+            Glissez une tâche ici
           </div>
         </div>
       </div>
@@ -101,17 +138,22 @@ onMounted(() => {
           <h3>Terminé</h3>
           <span class="task-count">{{ kanbanStore.doneTasks.length }}</span>
         </div>
-        <div class="column-content">
+        <div
+          class="column-content drop-zone"
+          @dragover="handleDragOver"
+          @drop="handleDrop($event, 'done')"
+          @dragenter="handleDragEnter"
+          @dragleave="handleDragLeave"
+        >
           <KanbanCard
             v-for="task in kanbanStore.doneTasks"
             :key="task.id"
             :task="task"
-            @move-left="moveTaskLeft"
-            @move-right="moveTaskRight"
+            @drag-start="handleDragStart"
             @delete="deleteTask"
           />
           <div v-if="kanbanStore.doneTasks.length === 0" class="empty-column">
-            Aucune tâche terminée
+            Glissez une tâche ici
           </div>
         </div>
       </div>
@@ -241,6 +283,33 @@ onMounted(() => {
 
 .column-content {
   padding: 20px;
+  min-height: 300px;
+  transition: all 0.3s ease;
+}
+
+.drop-zone {
+  position: relative;
+}
+
+.drop-zone.drag-over {
+  background-color: rgba(52, 152, 219, 0.1);
+  border: 2px dashed #3498db;
+  border-radius: 8px;
+}
+
+.drop-zone.drag-over::before {
+  content: 'Déposez la tâche ici';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #3498db;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .empty-column {
