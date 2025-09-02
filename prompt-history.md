@@ -136,6 +136,24 @@
 
 ---
 
+### 14. Remplacement des boutons fléchés par le drag and drop
+**Prompt :** "Replace the arrow buttons with drag and drop"
+
+**Actions réalisées :**
+- Ajout de la fonction moveTaskToColumn dans le store Kanban
+- Mise à jour de KanbanCard pour supporter le drag and drop :
+  - Ajout de l'attribut draggable="true"
+  - Implémentation de handleDragStart
+  - Remplacement des boutons fléchés par un indicateur de glissement (⋮⋮)
+  - Ajout de styles de curseur (grab/grabbing)
+- Mise à jour de KanbanBoard pour gérer les zones de drop :
+  - Implémentation des handlers dragover, drop, dragenter, dragleave
+  - Ajout d'effets visuels lors du survol avec drag-over
+  - Message de feedback "Déposez la tâche ici" pendant le drag
+- Amélioration des messages dans les colonnes vides ("Glissez une tâche ici")
+
+---
+
 ### 15. Restructuration en monorepo avec dossiers front et back
 **Prompt :** "Now, I want you to move the VueJS inside a subfolder named "front", then, I want you to create an other subfolder called "back""
 
@@ -198,6 +216,23 @@
 - Tests avec User::factory pour créer des données de test
 - Exécution des tests : **8 passed (50 assertions)** ✅
 - Base solide établie pour l'approche TDD du backend
+
+---
+
+### 19. Rebase de la branche avec la structure monorepo
+**Prompt :** "In the current branch, I want you to rebase main, there should be conflicts around vuejs project because in main branch, the vuejs is now in a "front" subfolder"
+
+**Actions réalisées :**
+- Identification de la branche courante : dragNdrop
+- Rebase sur monorepo-transformation (qui contient la structure front/back)
+- Résolution du conflit dans prompt-history.md :
+  - Fusion des sections drag and drop avec la structure monorepo
+  - Conservation de l'ordre chronologique correct des développements
+- Les fichiers Vue.js ont été automatiquement repositionnés dans front/
+- Rebase complété avec succès : la branche dragNdrop contient maintenant :
+  - La fonctionnalité drag and drop pour le Kanban
+  - La structure monorepo (front/ et back/)
+  - L'API Laravel avec utilisateurs factices
 
 ---
 

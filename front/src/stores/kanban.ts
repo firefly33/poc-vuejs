@@ -38,6 +38,14 @@ export const useKanbanStore = defineStore('kanban', () => {
     saveTasks()
   }
 
+  function moveTaskToColumn(taskId: number, newStatus: KanbanColumn) {
+    const task = tasks.value.find(t => t.id === taskId)
+    if (!task) return
+
+    task.status = newStatus
+    saveTasks()
+  }
+
   function deleteTask(taskId: number) {
     const index = tasks.value.findIndex(t => t.id === taskId)
     if (index > -1) {
@@ -86,6 +94,7 @@ export const useKanbanStore = defineStore('kanban', () => {
     doneTasks,
     addTask,
     moveTask,
+    moveTaskToColumn,
     deleteTask,
     loadTasks
   }
