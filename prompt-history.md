@@ -136,6 +136,53 @@
 
 ---
 
+### 15. Restructuration en monorepo avec dossiers front et back
+**Prompt :** "Now, I want you to move the VueJS inside a subfolder named "front", then, I want you to create an other subfolder called "back""
+
+**Actions réalisées :**
+- Création des dossiers front/ et back/
+- Déplacement de tous les fichiers Vue.js vers le dossier front/ :
+  - .vscode/, index.html, package*.json, public/, src/, tsconfig*.json, vite.config.ts, node_modules/
+- Commit des changements avec le message "refactor: restructure project as monorepo"
+- Préparation de la structure monorepo pour développement full-stack
+
+---
+
+### 16. Création d'un projet Laravel dans le dossier back
+**Prompt :** "now, i want you to create inside "back" folder a new laravel project (latest version), give me the hand of CLI choices if necessary"
+
+**Actions réalisées :**
+- Utilisation de Laravel Sail pour créer un projet Laravel avec Docker
+- Commande exécutée : `curl -s https://laravel.build/laravel-backend | bash`
+- Installation de Laravel 12.x (dernière version) avec :
+  - Base de données MySQL
+  - Redis pour le cache
+  - Mailpit pour les emails de développement  
+  - Meilisearch pour la recherche
+  - Selenium pour les tests
+- Déplacement des fichiers Laravel vers le dossier back/
+- Configuration automatique avec Docker Compose et Laravel Sail
+- Base de données initialisée avec les migrations par défaut
+
+---
+
+### 17. Création d'une API pour retourner des utilisateurs factices
+**Prompt :** "create a new API (no view redirection) that returns false users"
+
+**Actions réalisées :**
+- Création du fichier routes/api.php avec la route GET /api/users
+- Configuration du bootstrap/app.php pour inclure les routes API
+- Création du UserController dans app/Http/Controllers/API/
+- Création du FakeUserSeeder pour générer 20 utilisateurs factices
+- Exécution des migrations et du seeder :
+  - `./vendor/bin/sail artisan migrate`
+  - `./vendor/bin/sail artisan db:seed --class=FakeUserSeeder`
+- Démarrage de Laravel Sail : `./vendor/bin/sail up -d`
+- Test réussi de l'API : `curl http://localhost/api/users`
+- Retour JSON avec succès : 20 utilisateurs factices avec id, name, email, created_at
+
+---
+
 ## Notes
 - Ce fichier sera mis à jour à chaque nouveau prompt utilisateur
 - Format : Prompt → Actions réalisées
