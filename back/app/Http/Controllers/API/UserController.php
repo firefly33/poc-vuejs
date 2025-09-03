@@ -4,14 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of fake users.
-     * 
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse
