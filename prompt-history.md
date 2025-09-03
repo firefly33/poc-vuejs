@@ -183,6 +183,24 @@
 
 ---
 
+### 18. Création de tests pour l'API Users avec approche TDD
+**Prompt :** "I want to start working on the backend with a TDD approach. To start this, can you create a test for the users API ? (only the testing the existing code)"
+
+**Actions réalisées :**
+- Création du fichier tests/Feature/UsersApiTest.php avec 6 tests complets :
+  1. **test_users_api_returns_successful_response** - Vérifie le statut 200
+  2. **test_users_api_returns_correct_json_structure** - Valide la structure JSON
+  3. **test_users_api_returns_correct_data_format** - Contrôle le format des données
+  4. **test_users_api_returns_users_in_correct_order** - Test de l'ordre (newest first)
+  5. **test_users_api_works_with_empty_database** - Gestion de la base vide
+  6. **test_users_api_does_not_expose_sensitive_data** - Sécurité (pas de password/token)
+- Utilisation de RefreshDatabase et WithFaker traits
+- Tests avec User::factory pour créer des données de test
+- Exécution des tests : **8 passed (50 assertions)** ✅
+- Base solide établie pour l'approche TDD du backend
+
+---
+
 ## Notes
 - Ce fichier sera mis à jour à chaque nouveau prompt utilisateur
 - Format : Prompt → Actions réalisées
