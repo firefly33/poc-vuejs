@@ -1,15 +1,16 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Http\Controllers\API;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Models\User;
 
-class UsersApiTest extends TestCase
+class UserControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
+
 
     /**
      * Test that the users API endpoint returns a successful response.
@@ -79,7 +80,7 @@ class UsersApiTest extends TestCase
             $this->assertArrayHasKey('name', $user);
             $this->assertArrayHasKey('email', $user);
             $this->assertArrayHasKey('created_at', $user);
-            
+
             // Assert data types
             $this->assertIsInt($user['id']);
             $this->assertIsString($user['name']);
