@@ -62,27 +62,40 @@ onMounted(() => {
 
 <template>
   <div class="kanban-board">
-    <div class="add-task-section">
-      <h2>Ajouter une nouvelle tâche</h2>
-      <form @submit.prevent="addTask" class="add-task-form">
-        <input
-          v-model="newTaskTitle"
-          type="text"
-          placeholder="Titre de la tâche..."
-          class="task-input"
-          required
-        />
-        <textarea
-          v-model="newTaskDescription"
-          placeholder="Description (optionnelle)..."
-          class="task-textarea"
-          rows="2"
-        ></textarea>
-        <button type="submit" class="add-btn">Ajouter la tâche</button>
-      </form>
+    <!-- Loading State -->
+    <div v-if="kanbanStore.isLoading" class="loading-state">
+      <p>Chargement des tâches...</p>
     </div>
 
-    <div class="board-columns">
+    <!-- Error State -->
+    <div v-if="kanbanStore.error" class="error-state">
+      <p>Erreur: {{ kanbanStore.error }}</p>
+      <button @click="kanbanStore.fetchTasks" class="retry-btn">Réessayer</button>
+    </div>
+
+    <!-- Main Content -->
+    <template v-if="!kanbanStore.isLoading">
+      <div class="add-task-section">
+        <h2>Ajouter une nouvelle tâche</h2>
+        <form @submit.prevent="addTask" class="add-task-form">
+          <input
+            v-model="newTaskTitle"
+            type="text"
+            placeholder="Titre de la tâche..."
+            class="task-input"
+            required
+          />
+          <textarea
+            v-model="newTaskDescription"
+            placeholder="Description (optionnelle)..."
+            class="task-textarea"
+            rows="2"
+          ></textarea>
+          <button type="submit" class="add-btn">Ajouter la tâche</button>
+        </form>
+      </div>
+
+      <div class="board-columns">
       <div class="column">
         <div class="column-header todo">
           <h3>À faire</h3>
@@ -158,6 +171,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    </template>
   </div>
 </template>
 
@@ -317,5 +331,44 @@ onMounted(() => {
   color: #666;
   font-style: italic;
   padding: 40px 20px;
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.loading-state p {
+  color: #666;
+  font-size: 18px;
+}
+
+.error-state {
+  background: #fee;
+  border: 1px solid #fcc;
+}
+
+.error-state p {
+  color: #c33;
+  margin-bottom: 15px;
+}
+
+.retry-btn {
+  padding: 10px 20px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.retry-btn:hover {
+  background: #c0392b;
 }
 </style>

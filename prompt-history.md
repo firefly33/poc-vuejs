@@ -236,6 +236,105 @@
 
 ---
 
+### 20. Développement du domaine Task avec approche TDD
+**Prompt :** "Maintenant, je souhaite faire évoluer mon domaine Task. Mon objectif est de développer le GET pour /tasks, le controller doit donc renvoyer un tableau de Tasks. Peux-tu générer le code ? Essaie de séparer les responsabilités en mettant la récupération des Tasks dans un service plutôt que dans le controller directement."
+
+**Actions réalisées :**
+
+#### Tests TDD (tests/Feature/TasksApiTest.php)
+- Création de 6 tests complets pour l'API Tasks :
+  1. **test_tasks_api_returns_successful_response** - Statut 200 et structure JSON
+  2. **test_tasks_api_returns_correct_json_structure** - Validation structure success/message/data/count
+  3. **test_tasks_api_returns_correct_data_format** - Format des tâches (id, title, description, status, timestamps)
+  4. **test_tasks_are_ordered_by_newest_first** - Ordre chronologique décroissant
+  5. **test_tasks_api_works_with_empty_database** - Gestion base vide
+  6. **test_tasks_api_can_filter_by_status** - Filtrage par statut avec query parameter
+
+#### Architecture avec séparation des responsabilités
+
+**1. Modèle Task (app/Models/Task.php)**
+```php
+// Constantes de statut
+const STATUS_TODO = 'todo';
+const STATUS_IN_PROGRESS = 'in-progress'; 
+const STATUS_DONE = 'done';
+
+// Scopes Eloquent
+public function scopeByStatus($query, string $status)
+public function scopeNewestFirst($query)
+```
+
+**2. Service Layer (app/Services/TaskService.php)**
+```php
+public function getAllTasks(?string $status = null): Collection
+public function getTasksCount(?string $status = null): int
+public function createTask(array $data): Task
+public function updateTask(Task $task, array $data): Task
+public function deleteTask(Task $task): bool
+public function getValidStatuses(): array
+```
+
+**3. Controller avec injection (app/Http/Controllers/TaskController.php)**
+```php
+public function __construct(private TaskService $taskService) {}
+
+public function index(Request $request): JsonResponse {
+    $status = $request->query('status');
+    // Validation du statut
+    if ($status && !in_array($status, $this->taskService->getValidStatuses())) {
+        return response()->json(['success' => false, 'message' => 'Invalid status'], 400);
+    }
+    // Récupération via service
+    $tasks = $this->taskService->getAllTasks($status);
+    // Retour JSON structuré
+    return response()->json([
+        'success' => true,
+        'message' => 'Tasks retrieved successfully',
+        'data' => $tasks,
+        'count' => $tasks->count()
+    ]);
+}
+```
+
+#### Infrastructure
+- **Migration** : Table tasks (id, title, description, status, timestamps)
+- **Factory** : TaskFactory pour génération de fausses données avec statuts aléatoires
+- **Routes** : GET /api/tasks ajoutée dans routes/api.php
+
+#### Fonctionnalités implémentées
+- ✅ GET /api/tasks (toutes les tâches)
+- ✅ GET /api/tasks?status=todo (filtrage par statut)
+- ✅ Validation des paramètres avec messages d'erreur
+- ✅ Réponses JSON structurées (success/message/data/count)
+- ✅ Ordonnancement par date de création décroissante
+- ✅ Séparation complète des responsabilités (Controller → Service → Model)
+
+#### Résultats
+- **Tests** : **14 passed (107 assertions)** ✅
+- **Architecture** : Service layer pattern parfaitement implémenté
+- **API opérationnelle** : Testée et fonctionnelle en production
+
+#### Exemple de réponse API
+```json
+{
+  "success": true,
+  "message": "Tasks retrieved successfully", 
+  "data": [
+    {
+      "id": 1,
+      "title": "Task example",
+      "description": "Description example",
+      "status": "todo",
+      "created_at": "2025-09-04T10:00:00.000000Z",
+      "updated_at": "2025-09-04T10:00:00.000000Z"
+    }
+  ],
+  "count": 1
+}
+```
+
+---
+
 ## Notes
 - Ce fichier sera mis à jour à chaque nouveau prompt utilisateur
 - Format : Prompt → Actions réalisées
