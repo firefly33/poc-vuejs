@@ -79,7 +79,7 @@ export const useKanbanStore = defineStore('kanban', () => {
     if (!task) return
 
     task.status = newStatus
-    saveTasks()
+    saveTasksToStorage()
   }
 
   function deleteTask(taskId: number) {
